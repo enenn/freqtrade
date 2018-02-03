@@ -34,8 +34,9 @@ def load_tickerdata_file(
     :return dict OR empty if unsuccesful
     """
     path = make_testdata_path(datadir)
+    pair_file_string = pair.replace('/', '_')
     file = os.path.join(path, '{pair}-{ticker_interval}.json'.format(
-        pair=pair,
+        pair=pair_file_string,
         ticker_interval=ticker_interval,
     ))
     gzipfile = file + '.gz'
@@ -126,7 +127,7 @@ def download_backtesting_testdata(datadir: str, pair: str, interval: int = 5) ->
         interval
     )
 
-    filepair = pair.replace("-", "_")
+    filepair = pair.replace("/", "_")
     filename = os.path.join(path, '{pair}-{interval}.json'.format(
         pair=filepair,
         interval=interval,
