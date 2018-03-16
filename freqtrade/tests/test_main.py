@@ -278,9 +278,8 @@ def test_handle_trade(default_conf, limit_buy_order, limit_sell_order, mocker):
                           get_fee=MagicMock(return_value=0.0025),
                           buy=MagicMock(return_value={'id': 'mocked_limit_buy'}),
                           sell=MagicMock(return_value={'id': 'mocked_limit_sell'}))
-    mocker.patch.multiple('freqtrade.fiat_convert.Pymarketcap',
-                          ticker=MagicMock(return_value={'price_usd': 15000.0}),
-                          _cache_symbols=MagicMock(return_value={'BTC': 1}))
+    mocker.patch.multiple('freqtrade.fiat_convert.Market',
+                          ticker=MagicMock(return_value={'price_usd': 15000.0}))
     init(default_conf, create_engine('sqlite://'))
     create_trade(0.001, default_conf['ticker_interval'])
 
