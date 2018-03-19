@@ -282,6 +282,23 @@ def get_order(order_id: str, pair: str) -> Dict:
         raise OperationalException(e)
 
 
+def get_trades_for_order(order_id: str, pair: str, since: datetime) -> List:
+    if not _API.has['fetchMyTrades']:
+        return []
+    try:
+        my_trades = _API.fetch_my_trades(pair, since.timestamp)
+        matched_trades = [trade for trade in my_trades if my_trades['order_id'] == order_id]
+
+        return matched_trades
+
+    except ccxt.NetworkError as e:
+        raise NetworkException(
+            'Could not get trades due to networking error. Message: {}'.format(e)
+        )
+    except ccxt.BaseError as e:
+        raise OperationalException(e)
+
+
 # TODO: reimplement, not part of ccxt
 def get_pair_detail_url(pair: str) -> str:
     return ""
