@@ -325,3 +325,12 @@ def get_fee() -> float:
         _API.load_markets()
 
     return _API.calculate_fee('ETH/BTC', '', '', 1, 1)['rate']
+
+
+def get_fee_data(pair='ETH/BTC', type='limit', side='buy',
+                 amount=1, price=1, taker_or_maker='taker') -> Dict:
+    # validate that markets are loaded before trying to get fee
+    if _API.markets is None or len(_API.markets) == 0:
+        _API.load_markets()
+
+    return _API.calculate_fee(pair, type, side, amount, price, taker_or_maker)
