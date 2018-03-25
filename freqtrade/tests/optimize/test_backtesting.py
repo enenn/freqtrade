@@ -432,7 +432,7 @@ def test_backtest(default_conf) -> None:
     """
     backtesting = _BACKTESTING
 
-    data = optimize.load_data(None, ticker_interval='5m', pairs=['ETH/BTC'])
+    data = optimize.load_data(None, ticker_interval='5m', pairs=['UNITTEST/BTC'])
     data = trim_dictlist(data, -200)
     results = backtesting.backtest(
         {
