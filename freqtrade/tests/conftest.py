@@ -127,33 +127,80 @@ def ticker_sell_down():
 
 
 @pytest.fixture
-def health():
-    return MagicMock(return_value=[{
-        'Currency': 'BTC',
-        'IsActive': True,
-        'LastChecked': '2017-11-13T20:15:00.00',
-        'Notice': None
-    }, {
-        'Currency': 'ETH',
-        'IsActive': True,
-        'LastChecked': '2017-11-13T20:15:00.00',
-        'Notice': None
-    }, {
-        'Currency': 'TRST',
-        'IsActive': True,
-        'LastChecked': '2017-11-13T20:15:00.00',
-        'Notice': None
-    }, {
-        'Currency': 'SWT',
-        'IsActive': True,
-        'LastChecked': '2017-11-13T20:15:00.00',
-        'Notice': None
-    }, {
-        'Currency': 'BCC',
-        'IsActive': False,
-        'LastChecked': '2017-11-13T20:15:00.00',
-        'Notice': None
-    }])
+def markets():
+    return MagicMock(return_value=[
+        {
+            'id': 'ethbtc',
+            'symbol': 'ETH/BTC',
+            'base': 'ETH',
+            'quote': 'BTC',
+            'active': True,
+            'precision': {
+                'price': 8,
+                'amount': 8,
+                'cost': 8,
+            },
+            'lot': 0.00000001,
+            'limits': {
+                'amount': {
+                    'min': 0.01,
+                    'max': 1000,
+                },
+                'price': 500000,
+                'cost': 500000,
+            },
+            'info': '',
+        },
+        {
+            'id': 'tknbtc',
+            'symbol': 'TKN/BTC',
+            'base': 'TKN',
+            'quote': 'BTC',
+            'active': True,
+            'precision': {
+                'price': 8,
+                'amount': 8,
+                'cost': 8,
+            },
+            'lot': 0.00000001,
+            'limits': {
+                'amount': {
+                    'min': 0.01,
+                    'max': 1000,
+                },
+                'price': 500000,
+                'cost': 500000,
+            },
+            'info': '',
+        },
+        {
+            'id': 'blkbtc',
+            'symbol': 'BLK/BTC',
+            'base': 'BLK',
+            'quote': 'BTC',
+            'active': True,
+            'precision': {
+                'price': 8,
+                'amount': 8,
+                'cost': 8,
+            },
+            'lot': 0.00000001,
+            'limits': {
+                'amount': {
+                    'min': 0.01,
+                    'max': 1000,
+                },
+                'price': 500000,
+                'cost': 500000,
+            },
+            'info': '',
+        }
+    ])
+
+
+@pytest.fixture
+def markets_empty():
+    return MagicMock(return_value=[])
 
 
 @pytest.fixture
