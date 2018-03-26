@@ -34,7 +34,8 @@ def trim_dictlist(dict_list, num):
 
 def load_data_test(what):
     timerange = ((None, 'line'), None, -100)
-    data = optimize.load_data(None, ticker_interval='1m', pairs=['UNITTEST/BTC'], timerange=timerange)
+    data = optimize.load_data(None, ticker_interval='1m',
+                              pairs=['UNITTEST/BTC'], timerange=timerange)
     pair = data['UNITTEST/BTC']
     datalen = len(pair)
     # Depending on the what parameter we now adjust the
