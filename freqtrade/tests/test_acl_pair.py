@@ -54,13 +54,17 @@ def test_refresh_whitelist(mocker, markets):
     assert whitelist == refreshedwhitelist
 
 
-def test_refresh_whitelist_dynamic(mocker, markets):
+def test_refresh_whitelist_dynamic(mocker, markets, tickers):
     conf = whitelist_conf()
     freqtradebot = tt.get_patched_freqtradebot(mocker, conf)
-    mocker.patch('freqtrade.freqtradebot.exchange.get_markets', markets)
+    mocker.patch.multiple(
+        'freqtrade.freqtradebot.exchange',
+        get_markets=markets,
+        get_tickers=tickers
+    )
 
     # argument: use the whitelist dynamically by exchange-volume
-    whitelist = ['TKN/BTC', 'ETH/BTC']
+    whitelist = ['ETH/BTC', 'TKN/BTC']
 
     refreshedwhitelist = freqtradebot._refresh_whitelist(
         freqtradebot._gen_pair_whitelist(conf['stake_currency'])
