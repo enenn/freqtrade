@@ -5,6 +5,7 @@
     "fiat_display_currency": "USD",
     "dry_run": false,
     "unfilledtimeout": 600,
+    "dynamic_whitelist": false,
     "bid_strategy": {
         "ask_last_balance": 0.0
     },
