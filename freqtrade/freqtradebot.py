@@ -302,7 +302,7 @@ class FreqtradeBot(object):
         self.rpc.send_msg(
             '*{}:* Buying [{}]({}) with limit `{:.8f} ({:.6f} {}, {:.3f} {})` '
             .format(
-                exchange.get_name().upper(),
+                exchange.get_name().lower(),
                 pair.replace('_', '/'),
                 exchange.get_pair_detail_url(pair),
                 buy_limit,
@@ -320,7 +320,7 @@ class FreqtradeBot(object):
             fee=exchange.get_fee(),
             open_rate=buy_limit,
             open_date=datetime.utcnow(),
-            exchange=exchange.get_name().upper(),
+            exchange=exchange.get_name().lower(),
             open_order_id=order_id
         )
         Trade.session.add(trade)
