@@ -482,7 +482,7 @@ def test_processed() -> None:
 
 
 def test_backtest_pricecontours(default_conf) -> None:
-    tests = [['raise', 17], ['lower', 0], ['sine', 17]]
+    tests = [['raise', 19], ['lower', 0], ['sine', 16]]
     for [contour, numres] in tests:
         simple_backtest(default_conf, contour, numres)
 
@@ -524,7 +524,7 @@ def test_backtest_only_sell(default_conf):
 def test_backtest_alternate_buy_sell(default_conf):
     backtest_conf = _make_backtest_conf(conf=default_conf, pair='UNITTEST/BTC')
     results = _run_backtest_1(_trend_alternate, backtest_conf)
-    assert len(results) == 3
+    assert len(results) == 4
 
 
 def test_backtest_record(default_conf, mocker):
@@ -540,12 +540,12 @@ def test_backtest_record(default_conf, mocker):
         record="trades"
     )
     results = _run_backtest_1(_trend_alternate, backtest_conf)
-    assert len(results) == 3
+    assert len(results) == 4
     # Assert file_dump_json was only called once
     assert names == ['backtest-result.json']
     records = records[0]
     # Ensure records are of correct type
-    assert len(records) == 3
+    assert len(records) == 4
     # ('UNITTEST/BTC', 0.00331158, '1510684320', '1510691700', 0, 117)
     # Below follows just a typecheck of the schema/type of trade-records
     oix = None

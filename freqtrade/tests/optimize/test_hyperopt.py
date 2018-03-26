@@ -3,6 +3,7 @@ import json
 import os
 from copy import deepcopy
 from unittest.mock import MagicMock
+import signal
 
 import pandas as pd
 
@@ -397,7 +398,7 @@ def test_signal_handler(mocker):
     mocker.patch('freqtrade.optimize.hyperopt.Hyperopt.log_trials_result', m)
 
     hyperopt = _HYPEROPT
-    hyperopt.signal_handler(9, None)
+    hyperopt.signal_handler(signal.SIGINT, None)
     assert m.call_count == 3
 
 
