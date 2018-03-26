@@ -185,17 +185,20 @@ class FreqtradeBot(object):
         return state_changed
 
     @cached(TTLCache(maxsize=1, ttl=1800))
-    def _gen_pair_whitelist(self, base_currency: str, key: str = 'BaseVolume') -> List[str]:
+    def _gen_pair_whitelist(self, base_currency: str, key: str = 'quoteVolume') -> List[str]:
         """
         Updates the whitelist with with a dynamically generated list
         :param base_currency: base currency as str
-        :param key: sort key (defaults to 'BaseVolume')
+        :param key: sort key (defaults to 'quoteVolume')
         :return: List of pairs
         """
-        pairs = sorted(
-            [s['symbol'] for s in exchange.get_markets() if s['quote'] == base_currency],
-            reverse=True
-        )
+
+        tickers = exchange.get_tickers()
+        tickers = [v for k, v in tickers.items()
+                   if len(k.split('/')) == 2 and k.split('/')[1] == base_currency]
+
+        sorted_tickers = sorted(tickers, reverse=True, key=lambda t: t[key])
+        pairs = [s['symbol'] for s in sorted_tickers]
 
         return pairs
 
@@ -349,7 +352,7 @@ class FreqtradeBot(object):
         if trade.open_order_id:
             # Update trade with order values
             self.logger.info('Found open order for %s', trade)
-            trade.update(exchange.get_order(trade.open_order_id))
+            trade.update(exchange.get_order(trade.open_order_id, trade.pair))
 
         if trade.is_open and trade.open_order_id is None:
             # Check if we can sell our current pair

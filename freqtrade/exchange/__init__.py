@@ -211,6 +211,18 @@ def get_balances() -> dict:
 
 
 @retrier
+def get_tickers() -> Dict:
+    try:
+        return _API.fetch_tickers()
+    except ccxt.NetworkError as e:
+        raise NetworkException(
+            'Could not load tickers due to networking error. Message: {}'.format(e)
+        )
+    except ccxt.BaseError as e:
+        raise OperationalException(e)
+
+
+@retrier
 def get_ticker(pair: str, refresh: Optional[bool] = True) -> dict:
     global _TICKER_CACHE
     try:
