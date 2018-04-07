@@ -248,7 +248,8 @@ def test_status(default_conf, update, mocker, ticker) -> None:
     mocker.patch.multiple(
         'freqtrade.freqtradebot.exchange',
         validate_pairs=MagicMock(),
-        get_ticker=ticker
+        get_ticker=ticker,
+        get_pair_detail_url=MagicMock()
     )
     msg_mock = MagicMock()
     status_table = MagicMock()
@@ -387,7 +388,8 @@ def test_daily_handle(default_conf, update, ticker, limit_buy_order,
     mocker.patch.multiple(
         'freqtrade.freqtradebot.exchange',
         validate_pairs=MagicMock(),
-        get_ticker=ticker
+        get_ticker=ticker,
+        get_pair_detail_url=MagicMock()
     )
     msg_mock = MagicMock()
     mocker.patch.multiple(
@@ -838,6 +840,7 @@ def test_forcesell_all_handle(default_conf, update, ticker, mocker) -> None:
     mocker.patch('freqtrade.fiat_convert.CryptoToFiatConverter._find_price', return_value=15000.0)
     rpc_mock = mocker.patch('freqtrade.rpc.telegram.Telegram.send_msg', MagicMock())
     mocker.patch('freqtrade.rpc.telegram.Telegram._init', MagicMock())
+    mocker.patch('freqtrade.exchange.get_pair_detail_url', MagicMock())
     mocker.patch.multiple(
         'freqtrade.freqtradebot.exchange',
         validate_pairs=MagicMock(),

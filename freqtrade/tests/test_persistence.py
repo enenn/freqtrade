@@ -314,7 +314,7 @@ def test_clean_dry_run_db(default_conf):
         amount=123.0,
         fee=0.0025,
         open_rate=0.123,
-        exchange='BITTREX',
+        exchange='bittrex',
         open_order_id='dry_run_buy_12345'
     )
     Trade.session.add(trade)
@@ -325,7 +325,7 @@ def test_clean_dry_run_db(default_conf):
         amount=123.0,
         fee=0.0025,
         open_rate=0.123,
-        exchange='BITTREX',
+        exchange='bittrex',
         open_order_id='dry_run_sell_12345'
     )
     Trade.session.add(trade)
@@ -337,7 +337,7 @@ def test_clean_dry_run_db(default_conf):
         amount=123.0,
         fee=0.0025,
         open_rate=0.123,
-        exchange='BITTREX',
+        exchange='bittrex',
         open_order_id='prod_buy_12345'
     )
     Trade.session.add(trade)

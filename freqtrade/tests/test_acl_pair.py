@@ -27,62 +27,72 @@ def whitelist_conf():
 
 
 def get_market_summaries():
-    return [{
-        'MarketName': 'TKN/BTC',
-        'High': 0.00000919,
-        'Low': 0.00000820,
-        'Volume': 74339.61396015,
-        'Last': 0.00000820,
-        'BaseVolume': 1664,
-        'TimeStamp': '2014-07-09T07:19:30.15',
-        'Bid': 0.00000820,
-        'Ask': 0.00000831,
-        'OpenBuyOrders': 15,
-        'OpenSellOrders': 15,
-        'PrevDay': 0.00000821,
-        'Created': '2014-03-20T06:00:00',
-        'DisplayMarketName': ''
-    }, {
-        'MarketName': 'ETH/BTC',
-        'High': 0.00000072,
-        'Low': 0.00000001,
-        'Volume': 166340678.42280999,
-        'Last': 0.00000005,
-        'BaseVolume': 42,
-        'TimeStamp': '2014-07-09T07:21:40.51',
-        'Bid': 0.00000004,
-        'Ask': 0.00000005,
-        'OpenBuyOrders': 18,
-        'OpenSellOrders': 18,
-        'PrevDay': 0.00000002,
-        'Created': '2014-05-30T07:57:49.637',
-        'DisplayMarketName': ''
-    }, {
-        'MarketName': 'BLK/BTC',
-        'High': 0.00000072,
-        'Low': 0.00000001,
-        'Volume': 166340678.42280999,
-        'Last': 0.00000005,
-        'BaseVolume': 3,
-        'TimeStamp': '2014-07-09T07:21:40.51',
-        'Bid': 0.00000004,
-        'Ask': 0.00000005,
-        'OpenBuyOrders': 18,
-        'OpenSellOrders': 18,
-        'PrevDay': 0.00000002,
-        'Created': '2014-05-30T07:57:49.637',
-        'DisplayMarketName': ''
-    }]
+    return {
+        'TKN/BTC': {
+            'symbol': 'TKN/BTC',
+            'info': {
+                'High': 0.00000919,
+                'Low': 0.00000820,
+                'Volume': 74339.61396015,
+                'Last': 0.00000820,
+                'BaseVolume': 1664,
+                'TimeStamp': '2014-07-09T07:19:30.15',
+                'Bid': 0.00000820,
+                'Ask': 0.00000831,
+                'OpenBuyOrders': 15,
+                'OpenSellOrders': 15,
+                'PrevDay': 0.00000821,
+                'Created': '2014-03-20T06:00:00',
+                'DisplayMarketName': ''
+            }
+        },
+        'ETH/BTC': {
+            'symbol': 'ETH/BTC',
+            'info': {
+                'High': 0.00000072,
+                'Low': 0.00000001,
+                'Volume': 166340678.42280999,
+                'Last': 0.00000005,
+                'BaseVolume': 42,
+                'TimeStamp': '2014-07-09T07:21:40.51',
+                'Bid': 0.00000004,
+                'Ask': 0.00000005,
+                'OpenBuyOrders': 18,
+                'OpenSellOrders': 18,
+                'PrevDay': 0.00000002,
+                'Created': '2014-05-30T07:57:49.637',
+                'DisplayMarketName': ''
+            }
+        },
+        'BLK/BTC': {
+            'symbol': 'BLK/BTC',
+            'info': {
+                'High': 0.00000072,
+                'Low': 0.00000001,
+                'Volume': 166340678.42280999,
+                'Last': 0.00000005,
+                'BaseVolume': 3,
+                'TimeStamp': '2014-07-09T07:21:40.51',
+                'Bid': 0.00000004,
+                'Ask': 0.00000005,
+                'OpenBuyOrders': 18,
+                'OpenSellOrders': 18,
+                'PrevDay': 0.00000002,
+                'Created': '2014-05-30T07:57:49.637',
+                'DisplayMarketName': ''
+            }}
+    }
 
 
 def get_health():
-    return [{'Currency': 'ETH', 'IsActive': True},
-            {'Currency': 'TKN', 'IsActive': True},
-            {'Currency': 'BLK', 'IsActive': True}]
+    return {
+        'ETH/BTC': {'base': 'ETH', 'active': True},
+        'TKN/BTC': {'base': 'TKN', 'active': True},
+        'BLK/BTC': {'base': 'BLK', 'active': True}}
 
 
 def get_health_empty():
-    return []
+    return {}
 
 
 def test_refresh_market_pair_not_in_whitelist(mocker):

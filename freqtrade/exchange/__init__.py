@@ -1,27 +1,31 @@
 # pragma pylint: disable=W0603
 """ Cryptocurrency Exchanges support """
-import enum
 import logging
 from random import randint
 from typing import List, Dict, Any, Optional
 
 import ccxt
 import arrow
-from cachetools import cached, TTLCache
 
 from freqtrade import OperationalException, DependencyException, NetworkException
+
 
 logger = logging.getLogger(__name__)
 
 # Current selected exchange
 _API: ccxt.Exchange = None
+
 _CONF: dict = {}
 API_RETRY_COUNT = 4
 
 # Holds all open sell orders for dry_run
 _DRY_RUN_OPEN_ORDERS: Dict[str, Any] = {}
 
-_TICKER_CACHE: dict = {}
+# Urls to exchange markets, insert quote and base with .format()
+_EXCHANGE_URLS = {
+    ccxt.bittrex.__name__: '/Market/Index?MarketName={quote}-{base}',
+    ccxt.binance.__name__: '/tradeDetail.html?symbol={base}_{quote}'
+}
 
 
 def retrier(f):
@@ -63,7 +67,6 @@ def init(config: dict) -> None:
 
     if name not in ccxt.exchanges:
         raise OperationalException('Exchange {} is not supported'.format(name))
-
     try:
         _API = getattr(ccxt, name.lower())({
             'apiKey': exchange_config.get('key'),
@@ -71,8 +74,10 @@ def init(config: dict) -> None:
             'password': exchange_config.get('password'),
             'uid': exchange_config.get('uid'),
         })
-    except KeyError:
+    except (KeyError, AttributeError):
         raise OperationalException('Exchange {} is not supported'.format(name))
+
+    logger.info('Using Exchange "%s"', get_name())
 
     # Check if all pairs are available
     validate_pairs(config['exchange']['pair_whitelist'])
@@ -85,6 +90,7 @@ def validate_pairs(pairs: List[str]) -> None:
     :param pairs: list of pairs
     :return: None
     """
+
     try:
         markets = _API.load_markets()
     except ccxt.BaseError as e:
@@ -210,15 +216,11 @@ def get_balances() -> dict:
         raise OperationalException(e)
 
 
+# TODO: remove refresh argument, keeping it to keep track of where it was intended to be used
 @retrier
 def get_ticker(pair: str, refresh: Optional[bool] = True) -> dict:
-    global _TICKER_CACHE
     try:
-        if not refresh:
-            if _TICKER_CACHE and pair in _TICKER_CACHE:
-                return _TICKER_CACHE[pair]
-        _TICKER_CACHE[pair] = _API.fetch_ticker(pair)
-        return _TICKER_CACHE[pair]
+        return _API.fetch_ticker(pair)
     except ccxt.NetworkError as e:
         raise NetworkException(
             'Could not load tickers due to networking error. Message: {}'.format(e)
@@ -231,25 +233,11 @@ def get_ticker(pair: str, refresh: Optional[bool] = True) -> dict:
 def get_ticker_history(pair: str, tick_interval: str) -> List[Dict]:
     if 'fetchOHLCV' not in _API.has or not _API.has['fetchOHLCV']:
         raise OperationalException(
-            'Exhange {} does not support fetching historical candlestick data.'.format(_API.name)
+            'Exchange {} does not support fetching historical candlestick data.'.format(_API.name)
         )
 
     try:
-        history = _API.fetch_ohlcv(pair, timeframe=tick_interval)
-        history_json = []
-        for candlestick in history:
-            history_json.append({
-                'T': arrow.get(candlestick[0]/1000.0).strftime('%Y-%m-%dT%H:%M:%S.%f'),
-                'O': candlestick[1],
-                'H': candlestick[2],
-                'L': candlestick[3],
-                'C': candlestick[4],
-                'V': candlestick[5],
-            })
-        return history_json
-    except IndexError as e:
-        logger.warning('Empty ticker history. Msg %s', str(e))
-        return []
+        return _API.fetch_ohlcv(pair, timeframe=tick_interval)
     except ccxt.NetworkError as e:
         raise NetworkException(
             'Could not load ticker history due to networking error. Message: {}'.format(e)
@@ -297,9 +285,15 @@ def get_order(order_id: str, pair: str) -> Dict:
         raise OperationalException(e)
 
 
-# TODO: reimplement, not part of ccxt
 def get_pair_detail_url(pair: str) -> str:
-    return ""
+    try:
+        url_base = _API.urls.get('www')
+        base, quote = pair.split('/')
+
+        return url_base + _EXCHANGE_URLS[_API.id].format(base=base, quote=quote)
+    except KeyError:
+        logger.warning('Could not get exchange url for %s', get_name())
+        return ""
 
 
 def get_markets() -> List[dict]:
@@ -317,9 +311,22 @@ def get_name() -> str:
     return _API.name
 
 
+def get_id() -> str:
+    return _API.id
+
+
+def get_fee_maker() -> float:
+    return _API.fees['trading']['maker']
+
+
+def get_fee_taker() -> float:
+    return _API.fees['trading']['taker']
+
+
 def get_fee() -> float:
     # validate that markets are loaded before trying to get fee
     if _API.markets is None or len(_API.markets) == 0:
         _API.load_markets()
 
-    return _API.calculate_fee('ETH/BTC', '', '', 1, 1)['rate']
+    return _API.calculate_fee(symbol='ETH/BTC', type='', side='', amount=1, price=1)['rate']
+
